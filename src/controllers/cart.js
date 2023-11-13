@@ -50,16 +50,19 @@ const addToCart = async (req, res) => {
                     const bookExist = exitsCart.cartItems.find(
                         (item) => item.bookId == bookId
                     );
+                   
                     if (bookExist) {
                         if (quantity <= 0) {
-                            await CartItem.findOneAndDelete({ bookId });
+                            await CartItem.findByIdAndDelete(bookExist._id);
                             return res.json({
                                 message: "Sản phẩm đã xóa khỏi giỏ hàng.",
                             });
                         }
                         else {
-                            const cartItem = await CartItem.findOneAndUpdate(
-                                { bookId },
+                            console.log(exitsCart);
+                        
+                            const cartItem = await CartItem.findByIdAndUpdate(
+                                bookExist._id,
                                 {
                                     quantity: quantity,
                                     total: total
@@ -104,7 +107,7 @@ const addToCart = async (req, res) => {
 
 const removeCartItem = async (req, res) => {
     try {
-        const cartItem = await CartItem.findOneAndDelete(req.params.id);
+        const cartItem = await CartItem.findByIdAndDelete(req.params.id);
         if (!cartItem) {
             return res.json({
                 message: "Sản phẩm không tồn tại.",
